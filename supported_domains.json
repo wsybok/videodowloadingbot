@@ -1,0 +1,24 @@
+{
+    "domains": [
+        {"name": "📺 bilibili.com & bilibili.tv", "callback_data": "noop"},
+        {"name": "📹 dailymotion videos", "callback_data": "noop"},
+        {"name": "📘 facebook videos", "callback_data": "noop"},
+        {"name": "📸 instagram posts & reels", "callback_data": "noop"},
+        {"name": "🎥 loom videos", "callback_data": "noop"},
+        {"name": "📺 ok video", "callback_data": "noop"},
+        {"name": "📌 pinterest (all media)", "callback_data": "noop"},
+        {"name": "📹 reddit videos & gifs", "callback_data": "noop"},
+        {"name": "📺 rutube videos", "callback_data": "noop"},
+        {"name": "👻 snapchat stories & spotlights", "callback_data": "noop"},
+        {"name": "🎵 soundcloud", "callback_data": "noop"},
+        {"name": "📹 streamable.com", "callback_data": "noop"},
+        {"name": "🎵 tiktok videos, photos & audio", "callback_data": "noop"},
+        {"name": "🎥 tumblr video & audio", "callback_data": "noop"},
+        {"name": "🎮 twitch clips", "callback_data": "noop"},
+        {"name": "🐦 twitter videos & voice", "callback_data": "noop"},
+        {"name": "🎥 vimeo", "callback_data": "noop"},
+        {"name": "🎥 vine archive", "callback_data": "noop"},
+        {"name": "📺 vk video & clips", "callback_data": "noop"},
+        {"name": "📺 youtube videos, shorts & music", "callback_data": "noop"}
+    ]
+}
