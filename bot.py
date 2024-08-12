@@ -6,15 +6,17 @@ from telebot import types
 import hashlib
 import time
 import json
+from flask import Flask, request, abort
 
 load_dotenv()
 TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-print(f"Loaded TOKEN: {TOKEN}")  # Debugging line
+WEBHOOK_URL = os.getenv('WEBHOOK_URL')  # Your webhook URL
 
 if not TOKEN:
     raise Exception("TELEGRAM_BOT_TOKEN is not set in the environment variables")
 
 bot = telebot.TeleBot(TOKEN)
+app = Flask(__name__)
 
 # Cobalt API endpoint
 COBALT_API_URL = 'https://api.cobalt.tools/api/json'
@@ -165,15 +167,18 @@ def callback_query(call):
         bot.answer_callback_query(call.id)  # Acknowledge the callback query
     if user_id in user_states:
         del user_states[user_id]  # Clear the user state
-                
+
+@app.route('/' + TOKEN, methods=['POST'])
+def webhook():
+    if request.headers.get('content-type') == 'application/json':
+        json_str = request.get_data().decode('UTF-8')
+        update = telebot.types.Update.de_json(json_str)
+        bot.process_new_updates([update])
+        return '', 200
+    else:
+        abort(403)
+
 if __name__ == "__main__":
-    print("Bot is polling...")  # Debugging line
-    while True:
-        try:
-            bot.remove_webhook()
-            time.sleep(1)  # Give Telegram time to delete the webhook
-            bot.polling(none_stop=True)
-            
-        except Exception as e:
-            print(f"Polling error: {str(e)}")  # Log the error
-            time.sleep(15)  # Wait before restarting polling
+    bot.remove_webhook()
+    bot.set_webhook(url=WEBHOOK_URL + TOKEN)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
