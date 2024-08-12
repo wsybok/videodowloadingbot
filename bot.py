@@ -170,7 +170,10 @@ if __name__ == "__main__":
     print("Bot is polling...")  # Debugging line
     while True:
         try:
+            bot.remove_webhook()
+            time.sleep(1)  # Give Telegram time to delete the webhook
             bot.polling(none_stop=True)
+            
         except Exception as e:
             print(f"Polling error: {str(e)}")  # Log the error
             time.sleep(15)  # Wait before restarting polling
