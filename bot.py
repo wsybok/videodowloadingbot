@@ -91,12 +91,15 @@ def handle_message(message):
         pass
     else:
         if is_valid_url(message.text):
-            bot.reply_to(message, "Processing your URL...")
+            processing_message = bot.reply_to(message, "Processing your URL...")
             print(f"Processing URL: {message.text}")  # Debugging line
             try:
                 api_response = call_api(message.text)
                 status = api_response.get('status')
                 download_link = api_response.get('url')
+
+                # Delete the "Processing your URL..." message
+                bot.delete_message(chat_id=processing_message.chat.id, message_id=processing_message.message_id)
 
                 if status == 'redirect' and download_link:
                     # Treat redirected URL as the download link
@@ -124,7 +127,7 @@ def handle_message(message):
         else:
             bot.reply_to(message, "Invalid URL. Please send a valid video URL.")
             print(f"Invalid URL received: {message.text}")  # Debugging line
-
+            
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
     user_id = call.from_user.id
