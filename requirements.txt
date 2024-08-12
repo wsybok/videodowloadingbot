@@ -1,2 +1,2 @@
 telebot==0.0.4
-asyncio==3.4.3
+python-dotenv
