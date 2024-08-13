@@ -26,7 +26,7 @@ def access_secret_version(project_id, secret_id, version_id="latest"):
     
     return secret_string
 
-project_id = "tgbot-video"
+project_id = "279037284563"
 secret_id = "TELEGRAM_BOT_TOKEN"
 
 TOKEN = access_secret_version(project_id, secret_id)
