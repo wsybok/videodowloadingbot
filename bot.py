@@ -6,11 +6,35 @@ from telebot import types
 import hashlib
 import time
 import json
+from google.cloud import secretmanager
 from flask import Flask, request, abort
 
-load_dotenv()
-TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-WEBHOOK_URL = os.getenv('WEBHOOK_URL')  # Your webhook URL
+def access_secret_version(project_id, secret_id, version_id="latest"):
+    """
+    Access the secret version. By default, access the 'latest' version.
+    """
+    client = secretmanager.SecretManagerServiceClient()
+    
+    # Build the resource name of the secret version.
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+    
+    # Access the secret version.
+    response = client.access_secret_version(name=name)
+    
+    # Return the secret payload as a string.
+    secret_string = response.payload.data.decode("UTF-8")
+    
+    return secret_string
+
+project_id = "tgbot-video"
+secret_id = "TELEGRAM_BOT_TOKEN"
+
+TOKEN = access_secret_version(project_id, secret_id)
+
+
+#load_dotenv()
+#TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+#WEBHOOK_URL = os.getenv('WEBHOOK_URL')  # Your webhook URL
 
 if not TOKEN:
     raise Exception("TELEGRAM_BOT_TOKEN is not set in the environment variables")
