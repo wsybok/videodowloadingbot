@@ -10,12 +10,13 @@ from google.cloud import secretmanager
 from flask import Flask, request, abort
 
 
-def get_api_key(project_id, secret_id):
+
+def get_secret(project_id: str, secret_id: str) -> secretmanager.GetSecretRequest:
     # Create the Secret Manager client.
     client = secretmanager.SecretManagerServiceClient()
 
     # Build the resource name of the secret version.
-    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+    name = client.secret_path(project_id, secret_id)
 
     # Access the secret version.
     response = client.access_secret_version(name=name)
@@ -32,7 +33,7 @@ project_id = "279037284563"
 secret_id = "TELEGRAM_BOT_TOKEN"
 
 # Retrieve the API key from Secret Manager.
-TOKEN = get_api_key(project_id, secret_id)
+TOKEN = get_secret(project_id, secret_id)
 
 
 
