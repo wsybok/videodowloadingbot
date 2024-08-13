@@ -9,21 +9,33 @@ import json
 from google.cloud import secretmanager
 from flask import Flask, request, abort
 
+
+def get_api_key(project_id, secret_id):
+    # Create the Secret Manager client.
+    client = secretmanager.SecretManagerServiceClient()
+
+    # Build the resource name of the secret version.
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+
+    # Access the secret version.
+    response = client.access_secret_version(name=name)
+
+    # Get the secret payload.
+    api_key = response.payload.data.decode("UTF-8")
+
+    return api_key
+
+# GCP project ID.
 project_id = "279037284563"
+
+# ID of the secret that contains the API key.
 secret_id = "TELEGRAM_BOT_TOKEN"
-client = secretmanager.SecretManagerServiceClient()
 
-TOKEN = client.access_secret_version(request={"name": version.name})
-#payload = response.payload.data.decode("UTF-8")
-
+# Retrieve the API key from Secret Manager.
+TOKEN = get_api_key(project_id, secret_id)
 
 
-#TOKEN = access_secret_version(project_id, secret_id)
 
-
-#load_dotenv()
-#TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-#WEBHOOK_URL = os.getenv('WEBHOOK_URL')  # Your webhook URL
 
 if not TOKEN:
     raise Exception("TELEGRAM_BOT_TOKEN is not set in the environment variables")
