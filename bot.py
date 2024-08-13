@@ -45,7 +45,7 @@ def get_secret_value(project_id, secret_id, version_id="latest"):
         raise Exception(f"Failed to access secret: {response.text}")
 
 # Replace these variables with your specific details
-project_id = "279037284563"
+project_id = "tgbot-video"
 secret_id = "TELEGRAM_BOT_TOKEN"
 version_id = "1"  # or a specific version number, e.g., "1"
 
