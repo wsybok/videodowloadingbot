@@ -9,27 +9,16 @@ import json
 from google.cloud import secretmanager
 from flask import Flask, request, abort
 
-def access_secret_version(project_id, secret_id, version_id="latest"):
-    """
-    Access the secret version. By default, access the 'latest' version.
-    """
-    client = secretmanager.SecretManagerServiceClient()
-    
-    # Build the resource name of the secret version.
-    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
-    
-    # Access the secret version.
-    response = client.access_secret_version(name=name)
-    
-    # Return the secret payload as a string.
-    secret_string = response.payload.data.decode("UTF-8")
-    
-    return secret_string
-
 project_id = "279037284563"
 secret_id = "TELEGRAM_BOT_TOKEN"
+client = secretmanager.SecretManagerServiceClient()
 
-TOKEN = access_secret_version(project_id, secret_id)
+TOKEN = client.access_secret_version(request={"name": version.name})
+#payload = response.payload.data.decode("UTF-8")
+
+
+
+#TOKEN = access_secret_version(project_id, secret_id)
 
 
 #load_dotenv()
