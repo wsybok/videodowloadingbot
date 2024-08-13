@@ -2,6 +2,7 @@ import telebot
 import os
 from dotenv import load_dotenv
 import requests
+import subprocess
 from telebot import types
 import hashlib
 import time
@@ -11,29 +12,49 @@ from flask import Flask, request, abort
 
 
 
-def get_secret(project_id: str, secret_id: str) -> secretmanager.GetSecretRequest:
-    # Create the Secret Manager client.
-    client = secretmanager.SecretManagerServiceClient()
+def get_access_token():
+    # Get the access token using gcloud command
+    access_token = subprocess.check_output(
+        ["gcloud", "auth", "print-access-token"]
+    ).decode("utf-8").strip()
+    return access_token
 
-    # Build the resource name of the secret version.
-    name = client.secret_path(project_id, secret_id)
+def get_secret_value(project_id, secret_id, version_id="latest"):
+    # Construct the API URL
+    url = f"https://secretmanager.googleapis.com/v1/projects/{project_id}/secrets/{secret_id}/versions/{version_id}:access"
 
-    # Access the secret version.
-    response = client.access_secret_version(name=name)
+    # Get the access token
+    token = get_access_token()
 
-    # Get the secret payload.
-    api_key = response.payload.data.decode("UTF-8")
+    # Set the headers
+    headers = {
+        "authorization": f"Bearer {token}",
+        "content-type": "application/json",
+    }
 
-    return api_key
+    # Send the GET request to the Secret Manager API
+    response = requests.get(url, headers=headers)
 
-# GCP project ID.
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Extract the secret payload
+        secret_data = response.json()["payload"]["data"]
+        return secret_data
+    else:
+        # Handle error
+        raise Exception(f"Failed to access secret: {response.text}")
+
+# Replace these variables with your specific details
 project_id = "279037284563"
-
-# ID of the secret that contains the API key.
 secret_id = "TELEGRAM_BOT_TOKEN"
+version_id = "1"  # or a specific version number, e.g., "1"
 
-# Retrieve the API key from Secret Manager.
-TOKEN = get_secret(project_id, secret_id)
+# Get the secret value
+secret_value = get_secret_value(project_id, secret_id, version_id)
+
+# Decode the secret from Base64
+import base64
+TOKEN = base64.b64decode(secret_value).decode("utf-8")
 
 
 
