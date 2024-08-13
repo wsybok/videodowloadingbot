@@ -7,54 +7,13 @@ from telebot import types
 import hashlib
 import time
 import json
-from google.cloud import secretmanager
 from flask import Flask, request, abort
 
 
+load_dotenv()
 
-def get_access_token():
-    # Get the access token using gcloud command
-    access_token = subprocess.check_output(
-        ["gcloud", "auth", "print-access-token"]
-    ).decode("utf-8").strip()
-    return access_token
-
-def get_secret_value(project_id, secret_id, version_id="latest"):
-    # Construct the API URL
-    url = f"https://secretmanager.googleapis.com/v1/projects/{project_id}/secrets/{secret_id}/versions/{version_id}:access"
-
-    # Get the access token
-    token = get_access_token()
-
-    # Set the headers
-    headers = {
-        "authorization": f"Bearer {token}",
-        "content-type": "application/json",
-    }
-
-    # Send the GET request to the Secret Manager API
-    response = requests.get(url, headers=headers)
-
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Extract the secret payload
-        secret_data = response.json()["payload"]["data"]
-        return secret_data
-    else:
-        # Handle error
-        raise Exception(f"Failed to access secret: {response.text}")
-
-# Replace these variables with your specific details
-project_id = "tgbot-video"
-secret_id = "TELEGRAM_BOT_TOKEN"
-version_id = "1"  # or a specific version number, e.g., "1"
-
-# Get the secret value
-secret_value = get_secret_value(project_id, secret_id, version_id)
-
-# Decode the secret from Base64
-import base64
-TOKEN = base64.b64decode(secret_value).decode("utf-8")
+# 获取环境变量的值
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 
 
