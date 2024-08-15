@@ -25,7 +25,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t <region>-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/my-repo/my-bot-image:${{ github.sha }} .
+        docker build -t <asia-east1>-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/ tgbot-docker/tgbot-image:${{ github.sha }} .
 
     - name: Push Docker image to Artifact Registry
       run: |
